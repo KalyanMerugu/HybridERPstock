@@ -2,8 +2,12 @@ package commonFunctions;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Properties;
@@ -14,6 +18,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Reporter;
 
@@ -105,7 +110,7 @@ public class FunctionLibrary {
 	{
 		String Actual_title = driver.getTitle();
 		try {
-		org.testng.Assert.assertEquals(Actual_title, Expected_Title, Actual_title);
+			org.testng.Assert.assertEquals(Actual_title, Expected_Title, Actual_title);
 		}catch(AssertionError a)
 		{
 			System.out.println(a.getMessage());
@@ -115,5 +120,80 @@ public class FunctionLibrary {
 	public static void closeBrowser()
 	{
 		driver.quit();
+	}
+	//method for listboxs
+	public static void dropDownAction(String LocatorType, String LocatorValue, String TestData)
+	{
+		if(LocatorType.equalsIgnoreCase("xpath"))
+		{
+			//convert testdata cell into int
+			int value = Integer.parseInt(TestData);
+			Select element = new Select(driver.findElement(By.xpath(LocatorValue)));
+			element.selectByIndex(value);
+		}
+		if(LocatorType.equalsIgnoreCase("name"))
+		{
+			//convert testdata cell into int
+			int value = Integer.parseInt(TestData);
+			Select element = new Select(driver.findElement(By.name(LocatorValue)));
+			element.selectByIndex(value);
+		}
+		if(LocatorType.equalsIgnoreCase("id"))
+		{
+			//convert testdata cell into int
+			int value = Integer.parseInt(TestData);
+			Select element = new Select(driver.findElement(By.id(LocatorValue)));
+			element.selectByIndex(value);
+		}
+	}
+	//method capture stoxk number into notepad
+	public static void captureStock(String LocatorType, String LocatorValue)throws Throwable
+	{
+		String stockNumber ="";
+		if(LocatorType.equalsIgnoreCase("xpath"))
+		{
+			stockNumber = driver.findElement(By.xpath(LocatorValue)).getAttribute("value");
+		}
+		if(LocatorType.equalsIgnoreCase("name"))
+		{
+			stockNumber = driver.findElement(By.name(LocatorValue)).getAttribute("value");
+		}
+		if(LocatorType.equalsIgnoreCase("id"))
+		{
+			stockNumber = driver.findElement(By.id(LocatorValue)).getAttribute("value");
+		}
+		//write stocknumber into notepad
+		FileWriter fw = new FileWriter("./CaptureData/stocknumber.txt");
+		BufferedWriter bw = new BufferedWriter(fw);
+		bw.write(stockNumber);
+		bw.flush();
+		bw.close();
+	}
+	//verify stock number into a stock table
+	public static void stockTable()throws Throwable
+	{
+		//read path of note pad file
+		FileReader fr = new FileReader("./CaptureData/stocknumber.txt");
+		BufferedReader br = new BufferedReader(fr);
+		String Exp_Data = br.readLine();
+		//click search panel if search textbox is not displayed
+		if(!driver.findElement(By.xpath(conpro.getProperty("search-textbox"))).isDisplayed())
+			//click search panel
+			Thread.sleep(2000);
+			driver.findElement(By.xpath(conpro.getProperty("search-panel"))).click();
+		driver.findElement(By.xpath(conpro.getProperty("search-textbox"))).clear();
+		Thread.sleep(2000);
+		driver.findElement(By.xpath(conpro.getProperty("search-textbox"))).sendKeys(Exp_Data);
+		Thread.sleep(2000);
+		driver.findElement(By.xpath(conpro.getProperty("search-button"))).click();
+		Thread.sleep(3000);
+		String Act_Data = driver.findElement(By.xpath("//table[@class='table ewTable']/tbody/tr[1]/td[8]/div/span/span")).getText();
+		Reporter.log(Exp_Data+"       "+Act_Data,true);
+		try {
+			org.testng.Assert.assertEquals(Exp_Data, Act_Data, "Stock Number Not Found in Table");
+		} catch (Exception a) {
+			System.out.println(a.getMessage());
+		}
+
 	}
 }

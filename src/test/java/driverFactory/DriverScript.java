@@ -43,6 +43,7 @@ public void startTest()throws Throwable
 					}
 					if(ObjectType.equalsIgnoreCase("waitForElement"))
 					{
+						Thread.sleep(2000);
 						FunctionLibrary.waitForElement(Ltype, Lvalue, TestData);
 					}
 					if(ObjectType.equalsIgnoreCase("typeAction"))
@@ -61,18 +62,32 @@ public void startTest()throws Throwable
 					{
 						FunctionLibrary.closeBrowser();
 					}
+					if(ObjectType.equalsIgnoreCase("dropDownAction"))
+					{
+						FunctionLibrary.dropDownAction(Ltype, Lvalue, TestData);
+					}
+					if(ObjectType.equalsIgnoreCase("captureStock"))
+					{
+						FunctionLibrary.captureStock(Ltype,Lvalue);
+					}
+					if(ObjectType.equalsIgnoreCase("stockTable"))
+					{
+						FunctionLibrary.stockTable();
+					}
 					//write as pass into status cell in TCModule sheet
 					xl.setcelldata(TCModule, j, 5, "pass", outputpath);
+					Thread.sleep(2000);
 					Module_status = "True";
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 					//write as fail into status cell in TCModule sheet
-					xl.setcelldata(TCModule, j, 5, "pass", outputpath);
+					xl.setcelldata(TCModule, j, 5, "Fail", outputpath);
 					Module_New = "False";
 				}
 				if(Module_status.equalsIgnoreCase("True"))
 				{
 					//write pass into TCCSheet in status cell
+					Thread.sleep(2000);
 					xl.setcelldata(TCSheet, i, 3, "Pass", outputpath);
 				}	
 			}
