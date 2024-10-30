@@ -74,6 +74,23 @@ public void startTest()throws Throwable
 					{
 						FunctionLibrary.stockTable();
 					}
+					if(ObjectType.equalsIgnoreCase("capturesup"))
+					{
+						FunctionLibrary.capturesup(Ltype,Lvalue);
+					}
+					if(ObjectType.equalsIgnoreCase("suppliertable"))
+					{
+						FunctionLibrary.suppliertable();
+					}
+					if(ObjectType.equalsIgnoreCase("capturecus"))
+					{
+						FunctionLibrary.capturecus(Ltype,Lvalue);
+						}
+					if(ObjectType.equalsIgnoreCase("customertable"))
+					{
+						FunctionLibrary.customertable();
+
+					}
 					//write as pass into status cell in TCModule sheet
 					xl.setcelldata(TCModule, j, 5, "pass", outputpath);
 					Thread.sleep(2000);
